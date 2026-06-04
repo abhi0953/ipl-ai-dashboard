@@ -18,42 +18,108 @@ def show_table(df):
 
 conn = duckdb.connect("ipl.duckdb")
 
+st.title("🏏 IPL Analytics Dashboard")
+
+st.markdown("""
+### Analyze IPL History Like Never Before
+
+Explore batting records, bowling performances, team statistics,
+venue insights, and player profiles across IPL seasons.
+
+📊 Data Coverage: 2008–2026
+""")
+
+
+
+st.markdown("---")
+
+st.subheader("📌 Available Analytics")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.info("""
+🏏 Batting Analytics
+
+• Orange Cap Leaders
+• Strike Rates
+• Season Stats
+• Player Comparisons
+""")
+
+with col2:
+    st.info("""
+🎯 Bowling Analytics
+
+• Purple Cap Leaders
+• Economy Rates
+• Wicket Takers
+• Season Stats
+""")
+
+col3, col4 = st.columns(2)
+
+with col3:
+    st.info("""
+🏆 Team Analytics
+
+• Head to Head
+• Team Records
+• Winning Stats
+""")
+
+with col4:
+    st.info("""
+👤 Player Profiles
+
+• Career Stats
+• Season Runs
+• Top Venues
+• Milestones
+""")
+
+
+
 # apply_theme()
 
-st.title("🏏 IPL Analytics Dashboard")
-st.caption("Built By Abhishek Patel")
+st.title("🏏 IPL History")
 
 # KPI SECTION
 
-matches = conn.execute(
-    "SELECT COUNT(*) FROM matches"
-).fetchone()[0]
+matches = conn.execute("""
+SELECT COUNT(*) FROM matches
+""").fetchone()[0]
 
-deliveries = conn.execute(
-    "SELECT COUNT(*) FROM deliveries_v2"
-).fetchone()[0]
+players = conn.execute("""
+SELECT COUNT(DISTINCT player_name)
+FROM player_batting_match
+""").fetchone()[0]
 
-players = conn.execute(
-    "SELECT COUNT(*) FROM players"
-).fetchone()[0]
+runs = conn.execute("""
+SELECT SUM(runs)
+FROM player_batting_match
+""").fetchone()[0]
 
-teams = conn.execute(
-    "SELECT COUNT(*) FROM teams"
-).fetchone()[0]
+wickets = conn.execute("""
+SELECT SUM(out_flag)
+FROM player_batting_match
+""").fetchone()[0]
 
-c1, c2, c3, c4 = st.columns(4)
+col1, col2, col3, col4 = st.columns(4)
 
-with c1:
-    st.metric("Matches", f"{matches:,}")
+with col1:
+    st.metric("🏏 Matches", f"{matches:,}")
 
-with c2:
-    st.metric("Deliveries", f"{deliveries:,}")
+with col2:
+    st.metric("👤 Players", f"{players:,}")
 
-with c3:
-    st.metric("Players", f"{players:,}")
+with col3:
+    st.metric("🔥 Runs", f"{runs:,}")
 
-with c4:
-    st.metric("Teams", f"{teams:,}")
+with col4:
+    st.metric("🎯 Wickets", f"{wickets:,}")
+
+
 
 # TEAMS
 
@@ -187,6 +253,91 @@ show_table(team_stats)
 
 st.bar_chart(
     team_stats.set_index("team")["wins"]
+)
+
+st.markdown("---")
+st.subheader("🚀 Explore Analytics")
+
+# Row 1
+col1, col2 = st.columns(2)
+
+with col1:
+    with st.container(border=True):
+        st.page_link(
+            "pages/1_Batting.py",
+            label=" Batting Analytics",
+            icon="🏏"
+        )
+
+        st.caption(
+            "Orange Cap • Strike Rate • Season Stats"
+        )
+
+with col2:
+    with st.container(border=True):
+        st.page_link(
+            "pages/2_Bowling.py",
+            label=" Bowling Analytics",
+            icon="🎯"
+        )
+
+        st.caption(
+            "Purple Cap • Economy • Wickets"
+        )
+
+# Row 2
+col3, col4 = st.columns(2)
+
+with col3:
+    with st.container(border=True):
+        st.page_link(
+            "pages/3_Teams.py",
+            label=" Team Analytics",
+            icon="🏆"
+        )
+
+        st.caption(
+            "Head-to-Head • Team Records"
+        )
+
+with col4:
+    with st.container(border=True):
+        st.page_link(
+            "pages/4_Venues.py",
+            label=" Venue Analytics",
+            icon="🏟"
+        )
+
+        st.caption(
+            "Venue Records • Ground Analysis"
+        )
+
+# Row 3
+col5, col6 = st.columns(2)
+
+with col5:
+    with st.container(border=True):
+        st.page_link(
+            "pages/5_Player_Profile.py",
+            label=" Player Analytics",
+            icon="👤"
+        )
+
+        st.caption(
+            "Career Stats • Milestones • Seasons"
+        )
+
+with col6:
+    with st.container(border=True):
+        st.markdown("###### 🔥 Coming Soon")
+
+        st.caption(
+            "Powerplay Analytics • Death Overs Analytics • AI Assistant"
+        )
+st.markdown("---")
+
+st.caption(
+    "Built by Abhishek Patel • IPL Analytics Dashboard"
 )
 
 conn.close()
