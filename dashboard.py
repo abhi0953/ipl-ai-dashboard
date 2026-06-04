@@ -1,7 +1,7 @@
 import streamlit as st
 import duckdb
 
-from utils.theme import apply_theme
+from utils.sidebar import show_sidebar
 
 st.set_page_config(
     page_title="IPL Analytics Dashboard",
@@ -9,7 +9,15 @@ st.set_page_config(
     layout="wide"
 )
 
+st.markdown("""
+<style>
+[data-testid="stSidebarNav"] {
+    display: none;
+}
+</style>
+""", unsafe_allow_html=True)
 
+show_sidebar()
 
 def show_table(df):
     df = df.copy()
